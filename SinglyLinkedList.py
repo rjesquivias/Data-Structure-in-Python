@@ -126,6 +126,28 @@ class LinkedList:
             self.head = cur_1
 
         cur_1.next, cur_2.next = cur_2.next, cur_1.next
+
+    def reverse_iterative(self):
+        prev = None
+        cur = self.head
+        while cur:
+            nxt = cur.next
+            cur.next = prev
+            prev = cur
+            cur = nxt
+        self.head = prev
+
+    def reverse_recursive(self):
+
+        def _reverse_recursive(cur, prev):
+            if not cur:
+                return prev
+
+            nxt = cur.next
+            cur.next = prev
+            return _reverse_recursive(nxt, cur)
+
+        self.head = _reverse_recursive(cur=self.head, prev=None)
         
 if __name__ == "__main__":
     llist = LinkedList()
@@ -150,4 +172,12 @@ if __name__ == "__main__":
 
     llist.swap_nodes("C", "C")
     print("Swapping nodes C and C where both keys are same")
+    llist.print_list()
+
+    print("Printing in reverse_iterative")
+    llist.reverse_iterative()
+    llist.print_list()
+
+    print("Printing in reverse_recursive")
+    llist.reverse_recursive()
     llist.print_list()
