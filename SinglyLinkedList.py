@@ -192,6 +192,28 @@ class LinkedList:
                 seen.add(cur.data)
                 prev = cur
             cur = prev.next
+    
+    def print_nth_from_last(self, n):
+        p = self.head
+        q = self.head
+
+        # First to last(n == 1) is the last element in the list
+        if n == 0:
+            return None 
+
+        while q and n > 0:
+            q = q.next
+            n -= 1
+
+        # Edge case where N is too big for our list
+        if n != 0:
+            return None
+
+        while q:
+            p = p.next
+            q = q.next
+
+        return p.data
         
 if __name__ == "__main__":
     llist = LinkedList()
@@ -208,3 +230,19 @@ if __name__ == "__main__":
     print("Linked List After Removing Duplicates")
     llist.remove_duplicates()
     llist.print_list()
+
+    print("1st from last")
+    print(llist.print_nth_from_last(1))
+
+    print("2nd from last")
+    print(llist.print_nth_from_last(2))
+
+    print("3rd from last")
+    print(llist.print_nth_from_last(3))
+
+    print("4th from last")
+    print(llist.print_nth_from_last(4))
+
+    print("5th from last")
+    print(llist.print_nth_from_last(5))
+
