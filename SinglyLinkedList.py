@@ -178,55 +178,33 @@ class LinkedList:
             s_iter.next = p
 
         self.head = sentinal.next
+
+    def remove_duplicates(self):
+        cur = self.head
+        prev = None
+        seen = set()
+
+        while cur:
+            if cur.data in seen:
+                prev.next = cur.next
+                cur = None
+            else:
+                seen.add(cur.data)
+                prev = cur
+            cur = prev.next
         
 if __name__ == "__main__":
     llist = LinkedList()
-    llist.append("A")
-    llist.append("B")
-    llist.append("C")
-    llist.append("D")
-    print("Original List")
+    llist.append(1)
+    llist.append(6)
+    llist.append(1)
+    llist.append(4)
+    llist.append(2)
+    llist.append(2)
+    llist.append(4)
+
+    print("Original Linked List")
     llist.print_list()
-
-    llist.swap_nodes("B", "C")
-    print("Swapping nodes B and C that are not head nodes")
+    print("Linked List After Removing Duplicates")
+    llist.remove_duplicates()
     llist.print_list()
-
-    llist.swap_nodes("A", "B")
-    print("Swapping nodes A and B where key_1 is head node")
-    llist.print_list()
-
-    llist.swap_nodes("D", "B")
-    print("Swapping nodes D and B where key_2 is head node")
-    llist.print_list()
-
-    llist.swap_nodes("C", "C")
-    print("Swapping nodes C and C where both keys are same")
-    llist.print_list()
-
-    print("Printing in reverse_iterative")
-    llist.reverse_iterative()
-    llist.print_list()
-
-    print("Printing in reverse_recursive")
-    llist.reverse_recursive()
-    llist.print_list()
-
-    print("Printing merge 2 sorted linked lists")
-    llist_1 = LinkedList()
-    llist_2 = LinkedList()
-
-    llist_1.append(1)
-    llist_1.append(5)
-    llist_1.append(7)
-    llist_1.append(9)
-    llist_1.append(10)
-
-    llist_2.append(2)
-    llist_2.append(3)
-    llist_2.append(4)
-    llist_2.append(6)
-    llist_2.append(8)
-
-    llist_1.merge_sorted(llist_2)
-    llist_1.print_list()
