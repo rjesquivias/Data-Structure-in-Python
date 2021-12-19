@@ -26,27 +26,27 @@ class Trie:
         return temp.terminal if temp is not None else False
 
     def delete(self, s):
-        self.__delete(s, 0, self.root)
+        self._delete(s, 0, self.root)
 
-    def __delete(self, s, index, root):
+    def _delete(self, s, index, root):
         if root is None:
             return root
 
         if index >= len(s):
             root.terminal = False
 
-            if self.__has_no_children(root):
+            if self._has_no_children(root):
                 root = None
         else:
             current_char = s[index]
-            root.children[current_char] = self.__delete(s, index + 1, root.children[current_char])
+            root.children[current_char] = self._delete(s, index + 1, root.children[current_char])
 
-            if self.__has_no_children(root) and root.terminal is False:
+            if self._has_no_children(root) and root.terminal is False:
                 root = None
 
         return root
 
-    def __has_no_children(self, root):
+    def _has_no_children(self, root):
         if root is None: 
             return False
 
@@ -54,10 +54,10 @@ class Trie:
 
     def __str__(self):
         stringList = []
-        self.__buildStringList(self.root, stringList)
+        self._buildStringList(self.root, stringList)
         return str(stringList)
 
-    def __buildStringList(self, root, stringList, currentString = ""):
+    def _buildStringList(self, root, stringList, currentString = ""):
         if root is None:
             return
 
@@ -65,7 +65,7 @@ class Trie:
             stringList.append(currentString)
 
         for key, value in root.children.items():
-            self.__buildStringList(value, stringList, currentString + key)
+            self._buildStringList(value, stringList, currentString + key)
 
 
 if __name__ == "__main__":
