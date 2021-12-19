@@ -83,7 +83,7 @@ class SinglyLinkedList:
         else:
             previous.next = current.next
 
-    def append(item):
+    def append(self, item):
         """Adds a new item to the end of the list making it the last item in the collection"""
         temp = Node(item)
         
@@ -96,7 +96,7 @@ class SinglyLinkedList:
 
         current.next = temp
 
-    def index(item):
+    def index(self, item):
         """Returns the position of item in the list. It needs the item and returns the index."""
         current = self.head
         count = 0
@@ -111,7 +111,7 @@ class SinglyLinkedList:
         else:
             return count
 
-    def insert(pos, item): 
+    def insert(self, pos, item): 
         """Adds a new item to the list at position pos. It needs the item and returns nothing."""
         current = self.head
         previous = None
@@ -126,12 +126,13 @@ class SinglyLinkedList:
         else:
             temp = Node(item)
             if previous is None:
+                temp.next = current
                 self.head = temp
             else:
                 temp.next = previous.next
                 previous.next = temp
 
-    def pop():
+    def pop(self):
         """ removes and returns the last item in the list. It needs nothing and returns an item. Assume the list has at least one item. """
         if self.head is None:
             raise IndexError("Pop from empty list")
@@ -153,7 +154,7 @@ class SinglyLinkedList:
             current = None
             return data
 
-    def pop(pos):
+    def pop_at_pos(self, pos):
         """ removes and returns the item at position pos. It needs the position and returns the item. Assume the item is in the list. """
         if self.head is None:
             raise IndexError("Pop from empty list")
@@ -170,7 +171,7 @@ class SinglyLinkedList:
         else:
             if previous is None:
                 data = current.data
-                self.head = None
+                self.head = current.next
                 current = None
                 return data
             else:
