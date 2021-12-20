@@ -51,7 +51,6 @@ class DynamicArray(object):
         """
         This function inserts the item at any specified index.
         """
-
         
         if index<0 or index>self.n:
             print("please enter appropriate index..")
