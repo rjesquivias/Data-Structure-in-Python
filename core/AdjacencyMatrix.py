@@ -1,6 +1,4 @@
 # Adjacency Matrix representation in Python
-
-
 class Graph(object):
 
     # Initialize the matrix
