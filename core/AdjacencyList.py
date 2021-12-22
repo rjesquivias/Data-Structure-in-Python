@@ -13,8 +13,9 @@ class VertexAttributes:
         return str("color: " + str(self.color) + " | distance: " + str(self.distance) + " | parent: " + str(self.parent))
 
 class Graph:
-    def __init__(self):
+    def __init__(self, vertex_attributes=None):
         self.graph = defaultdict(list)
+        self.vertex_attributes = vertex_attributes
 
     # Add edges
     def add_edge(self, u, v):
@@ -40,9 +41,10 @@ class Graph:
     # Note: We wouldn't need to create this auxillary data structure in the object oriented
     #       graph approach where we store the list of adjacent nodes within the Node objects
     #       themselves
+    # O(V + E)
     def BFS(self, source):
         # Initialize our auxillary data structures for each vertex
-        vertex_attributes = defaultdict(VertexAttributes)
+        self.vertex_attributes = defaultdict(VertexAttributes)
 
         for vertex in self.graph:
             # Create our VertexAttribute object
@@ -51,11 +53,11 @@ class Graph:
             vertex_attribute.distance = sys.maxsize
             vertex_attribute.parent = None
             # Store the data using the vertices index value as a key
-            vertex_attributes[vertex] = vertex_attribute
+            self.vertex_attributes[vertex] = vertex_attribute
 
         # Source vertex data initialization
-        vertex_attributes[source].color = "gray"
-        vertex_attributes[source].distance = 0
+        self.vertex_attributes[source].color = "gray"
+        self.vertex_attributes[source].distance = 0
 
         # Standard BFS
         q = deque()
@@ -63,24 +65,25 @@ class Graph:
         while len(q) != 0:
             parent = q.popleft()
             print(str(parent), end=" ")
-            print(vertex_attributes[parent])
+            print(self.vertex_attributes[parent])
             for adjacent_vertex in self.graph[parent]:
-                attributes = vertex_attributes[adjacent_vertex]
+                attributes = self.vertex_attributes[adjacent_vertex]
                 # We are using the color attribute as a replacement for a 'seen' array.
                 # In the event that we weren't storing data in an auxillary data structure,
                 # We would need to create a boolean 'seen' array to ensure we don't revisit nodes
                 if attributes.color == "white":
                     attributes.color = "gray"
-                    attributes.distance = vertex_attributes[parent].distance + 1
+                    attributes.distance = self.vertex_attributes[parent].distance + 1
                     attributes.parent = parent
                     q.append(adjacent_vertex)
 
-            vertex_attributes[parent].color = "black"
+            self.vertex_attributes[parent].color = "black"
 
+    # O(V + E)
     def standard_BFS(self, s):
  
         # Mark all the vertices as not visited
-        visited = [False] * (max(self.graph) + 1)
+        visited = defaultdict(bool)
  
         # Create a queue for BFS
         queue = []
@@ -106,16 +109,38 @@ class Graph:
                     queue.append(i)
                     visited[i] = True
 
-if __name__ == "__main__":
-    V = 5
+    # O(n) where n = number of nodes in path from source to destination
+    def print_path(self, source, destination):
+        if self.vertex_attributes is None:
+            print(f"Run BFS from source {source} first to calculate the path")
+            return
 
+        if destination == source:
+            print(source)
+        elif self.vertex_attributes[destination].parent == None:
+            print(f"No path from {source} to {destination} exists.")
+        else:
+            self.print_path(source, self.vertex_attributes[destination].parent)
+            print(destination)
+
+
+if __name__ == "__main__":
     # Create graph and edges
     graph = Graph()
-    graph.add_edge(0, 1)
-    graph.add_edge(0, 2)
-    graph.add_edge(0, 3)
-    graph.add_edge(1, 2)
+
+    graph.add_edge('v', 'r')
+    graph.add_edge('r', 's')
+    graph.add_edge('s', 'w')
+    graph.add_edge('w', 't')
+    graph.add_edge('w', 'x')
+    graph.add_edge('t', 'u')
+    graph.add_edge('t', 'x')
+    graph.add_edge('x', 'u')
+    graph.add_edge('x', 'y')
+    graph.add_edge('u', 'y')
 
     graph.print_graph()
-    graph.BFS(0)
-    graph.standard_BFS(0)
+    graph.BFS('s')
+    graph.standard_BFS('s')
+    print()
+    graph.print_path('s', 'y')
