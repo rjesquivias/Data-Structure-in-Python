@@ -4,13 +4,16 @@ import sys
 
 # Adjacency List representation in Python
 class VertexAttributes:
-    def __init__(self, color="white", distance=sys.maxsize, parent=None):
+    def __init__(self, color="white", distance=sys.maxsize, parent=None, discovery_time=None, finishing_time=None):
         self.color = color
         self.distance = distance
         self.parent = parent
+        # Below times used in DFS (refer to CLRS)
+        self.discovery_time = discovery_time
+        self.finishing_time = finishing_time
 
     def __str__(self):
-        return str("color: " + str(self.color) + " | distance: " + str(self.distance) + " | parent: " + str(self.parent))
+        return str("color: " + str(self.color) + " | distance: " + str(self.distance) + " | parent: " + str(self.parent) + "| discovery time: " + str(self.discovery_time) + "| finishing time: " + str(self.finishing_time))
 
 class Graph:
     def __init__(self, vertex_attributes=None):
@@ -123,6 +126,38 @@ class Graph:
             self.print_path(source, self.vertex_attributes[destination].parent)
             print(destination)
 
+    # O(V + E)
+    def DFS(self):
+         # Initialize our auxillary data structures for each vertex
+        self.vertex_attributes = defaultdict(VertexAttributes)
+
+        for vertex in self.graph:
+            # Create our VertexAttribute object
+            vertex_attribute = VertexAttributes()
+            vertex_attribute.color = "white"
+            vertex_attribute.parent = None
+            # Store the data using the vertices index value as a key
+            self.vertex_attributes[vertex] = vertex_attribute
+
+        self.time = 0
+        for vertex in self.graph:
+            if self.vertex_attributes[vertex].color == "white":
+                self.DFS_visit(vertex)
+
+    def DFS_visit(self, current_vertex):
+        self.time += 1
+        self.vertex_attributes[current_vertex].discovery_time = self.time
+        self.vertex_attributes[current_vertex].color = "gray"
+        for vertex in self.graph[current_vertex]:
+            if self.vertex_attributes[vertex].color == "white":
+                self.vertex_attributes[vertex].parent = current_vertex
+                self.DFS_visit(vertex)
+        self.vertex_attributes[current_vertex].color = "black"
+        self.time += 1
+        self.vertex_attributes[current_vertex].finishing_time = self.time
+
+        print(current_vertex, end=" ")
+        print(self.vertex_attributes[current_vertex])
 
 if __name__ == "__main__":
     # Create graph and edges
@@ -144,3 +179,5 @@ if __name__ == "__main__":
     graph.standard_BFS('s')
     print()
     graph.print_path('s', 'y')
+
+    graph.DFS()
