@@ -127,6 +127,28 @@ class Graph:
             print(destination)
 
     # O(V + E)
+    # DFS can be used to classify edges much easier than in BFS, so whenever 
+    # we need to use edge classification, DFS will be the easy solution
+    # 1. Tree edges are edges in the Depth First Forest G. Edge (u,v) is a tree edge
+    #    if v was first discovered by exploring edge (u,v).
+    #    TLDR: The edges that first discover a node are considered tree edges
+    # 2. Back edges are those edges (u,v) connecting vertex u to an ancestor v
+    #    in a depth first tree. Self-loops that appear in DiGraphs are considered Back edges.
+    # 3. Forward edges are those nontree edges (u,v) connecting a vertex u to a descendent v
+    #    in a depth first tree
+    # 4. Cross edges are all other edges. They can go between vertices in the same depth first tree,
+    #    as long as one vertex in not the ancestor of the other, or they can go between vertices in
+    #    different depth first trees.
+    #
+    # The key idea is that when we first explore an edge(u,v), the color of v tells us something
+    # about the edge
+    # 1. White indicates a tree edge
+    # 2. Gray indicates a back edge
+    # 3. Black indicates a forward or cross edge
+    #
+    # Interesting classificaiton information about undirected graphs:
+    # In a depth-first search of an undirected graph G, every edge of G is either a tree
+    # edge or a back edge.
     def DFS(self):
          # Initialize our auxillary data structures for each vertex
         self.vertex_attributes = defaultdict(VertexAttributes)
