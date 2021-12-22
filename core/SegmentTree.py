@@ -73,11 +73,10 @@ class SegmentTree:
         # and then solve for our current index position which stores the solution to the current range(left - right)
         self.segmentArray[pos] = self.segmentArray[left_child] + self.segmentArray[right_child]
 
-    """
-    pos: the current index
-    left, right: the range that is stored at the current index
-    query_left, query_right: the range that we are querying for
-    """
+    
+    # pos: the current index
+    # left, right: the range that is stored at the current index
+    # query_left, query_right: the range that we are querying for
     # O(LogN)
     def get_sum_in_range(self, pos, left, right, query_left, query_right):
         # There are 3 cases to handle for the (left, right) & (query_left, query_right) ranges
@@ -126,6 +125,9 @@ class SegmentTree:
 
             self._update(left_child, left, mid, update_pos, update_diff)
             self._update(right_child, mid + 1, right, update_pos, update_diff)
+
+    # TODO: Update all values in a range
+    # https://www.geeksforgeeks.org/lazy-propagation-in-segment-tree/?ref=lbp
         
     def __str__(self):
         sol = []
