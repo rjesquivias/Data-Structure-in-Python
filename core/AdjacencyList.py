@@ -2,6 +2,20 @@ from collections import defaultdict
 from collections import deque
 import sys
 
+class LinkedNode:
+    def __init__(self, data, next=None):
+        self.data = data
+        self.next=next
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def prepend(self, data):
+        new_node = LinkedNode(data, self.head)
+        self.head = new_node
+
+
 # Adjacency List representation in Python
 class VertexAttributes:
     def __init__(self, color="white", distance=sys.maxsize, parent=None, discovery_time=None, finishing_time=None):
@@ -23,7 +37,6 @@ class Graph:
     # Add edges
     def add_edge(self, u, v):
         self.graph[u].append(v)
-        self.graph[v].append(u)
 
     # Print the graph
     def print_graph(self):
@@ -181,25 +194,61 @@ class Graph:
         print(current_vertex, end=" ")
         print(self.vertex_attributes[current_vertex])
 
+    def topological_sort(self):
+        l = LinkedList()
+        self.topological_dfs(l)
+        return l
+
+    def topological_dfs(self, linked_list):
+        self.vertex_attributes = defaultdict(VertexAttributes)
+
+        for vertex in self.graph:
+            vertex_attribute = VertexAttributes()
+
+            vertex_attribute.color = "white"
+            vertex_attribute.parent = None
+
+            self.vertex_attributes[vertex] = vertex_attribute
+
+        self.time = 0
+        for vertex in self.graph:
+            if self.vertex_attributes[vertex].color == "white":
+                self.topological_dfs_visit(vertex, linked_list)
+
+    def topological_dfs_visit(self, current_vertex, linked_list):
+        self.time += 1
+        self.vertex_attributes[current_vertex].discovery_time = self.time
+        self.vertex_attributes[current_vertex].color = "gray"
+        for vertex in self.graph[current_vertex]:
+            if self.vertex_attributes[vertex].color == "white":
+                self.vertex_attributes[vertex].parent = current_vertex
+                self.topological_dfs_visit(vertex, linked_list)
+        self.vertex_attributes[current_vertex].color = "black"
+        self.time += 1
+        self.vertex_attributes[current_vertex].finishing_time = self.time
+
+        # This is the single line that you need for topological sort
+        linked_list.prepend(current_vertex)
+
 if __name__ == "__main__":
     # Create graph and edges
     graph = Graph()
 
-    graph.add_edge('v', 'r')
-    graph.add_edge('r', 's')
-    graph.add_edge('s', 'w')
-    graph.add_edge('w', 't')
-    graph.add_edge('w', 'x')
-    graph.add_edge('t', 'u')
-    graph.add_edge('t', 'x')
-    graph.add_edge('x', 'u')
-    graph.add_edge('x', 'y')
-    graph.add_edge('u', 'y')
+    graph.add_edge('a', 'b')
+    graph.add_edge('b', 'c')
+    graph.add_edge('b', 'd')
+    graph.add_edge('c', 'e')
+    graph.add_edge('e', 'f')
 
     graph.print_graph()
-    graph.BFS('s')
-    graph.standard_BFS('s')
+    graph.BFS('a')
+    graph.standard_BFS('a')
     print()
-    graph.print_path('s', 'y')
-
+    graph.print_path('a', 'f')
     graph.DFS()
+
+    print("topological sort")
+    l = graph.topological_sort()
+    while l.head is not None:
+        print(l.head.data)
+        l.head = l.head.next
