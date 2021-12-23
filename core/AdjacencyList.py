@@ -2,20 +2,6 @@ from collections import defaultdict
 from collections import deque
 import sys
 
-class LinkedNode:
-    def __init__(self, data, next=None):
-        self.data = data
-        self.next=next
-
-class LinkedList:
-    def __init__(self):
-        self.head = None
-
-    def prepend(self, data):
-        new_node = LinkedNode(data, self.head)
-        self.head = new_node
-
-
 # Adjacency List representation in Python
 class VertexAttributes:
     def __init__(self, color="white", distance=sys.maxsize, parent=None, discovery_time=None, finishing_time=None):
@@ -30,13 +16,16 @@ class VertexAttributes:
         return str("color: " + str(self.color) + " | distance: " + str(self.distance) + " | parent: " + str(self.parent) + "| discovery time: " + str(self.discovery_time) + "| finishing time: " + str(self.finishing_time))
 
 class Graph:
-    def __init__(self, vertex_attributes=None):
+    def __init__(self):
         self.graph = defaultdict(list)
-        self.vertex_attributes = vertex_attributes
+        self.vertex_attributes = defaultdict(VertexAttributes)
+        self.time = 0
 
     # Add edges
     def add_edge(self, u, v):
         self.graph[u].append(v)
+        if self.graph[v] == None:
+            self.graph[v] = []
 
     # Print the graph
     def print_graph(self):
@@ -194,12 +183,14 @@ class Graph:
         print(current_vertex, end=" ")
         print(self.vertex_attributes[current_vertex])
 
+    # O(V + E)
+    # This only works on directed acyclic graphs
     def topological_sort(self):
-        l = LinkedList()
-        self.topological_dfs(l)
-        return l
+        stack = []
+        self.topological_dfs(stack)
+        return stack
 
-    def topological_dfs(self, linked_list):
+    def topological_dfs(self, stack):
         self.vertex_attributes = defaultdict(VertexAttributes)
 
         for vertex in self.graph:
@@ -213,42 +204,72 @@ class Graph:
         self.time = 0
         for vertex in self.graph:
             if self.vertex_attributes[vertex].color == "white":
-                self.topological_dfs_visit(vertex, linked_list)
+                self.topological_dfs_visit(vertex, stack)
 
-    def topological_dfs_visit(self, current_vertex, linked_list):
+    def topological_dfs_visit(self, current_vertex, stack):
         self.time += 1
         self.vertex_attributes[current_vertex].discovery_time = self.time
         self.vertex_attributes[current_vertex].color = "gray"
         for vertex in self.graph[current_vertex]:
             if self.vertex_attributes[vertex].color == "white":
                 self.vertex_attributes[vertex].parent = current_vertex
-                self.topological_dfs_visit(vertex, linked_list)
+                self.topological_dfs_visit(vertex, stack)
+            if self.vertex_attributes[vertex].color == "gray":
+                print(f"Detected a cycle from {current_vertex} to {vertex}. The topological sort is invalid.")
         self.vertex_attributes[current_vertex].color = "black"
         self.time += 1
         self.vertex_attributes[current_vertex].finishing_time = self.time
 
         # This is the single line that you need for topological sort
-        linked_list.prepend(current_vertex)
+        stack.append(current_vertex)
+
+    def getTranspose(self):
+        g = Graph()
+  
+        # Recur for all the vertices adjacent to this vertex
+        for i in self.graph:
+            for j in self.graph[i]:
+                g.add_edge(j,i)
+        return g
+
+    def print_strongly_connected_components(self):
+        stack = []
+        self.topological_dfs(stack)
+        transpose = self.getTranspose()
+        visited = defaultdict(bool)
+
+        for vertex in self.graph:
+            visited[vertex] = False
+
+        while stack:
+            vertex = stack.pop()
+            if visited[vertex] == False:
+                transpose.DFSUtil(vertex, visited)
+                print()
+
+    def DFSUtil(self,v,visited):
+        # Mark the current node as visited and print it
+        visited[v]= True
+        print(v)
+        #Recur for all the vertices adjacent to this vertex
+        for i in self.graph[v]:
+            if visited[i]==False:
+                self.DFSUtil(i,visited)
 
 if __name__ == "__main__":
     # Create graph and edges
     graph = Graph()
 
-    graph.add_edge('a', 'b')
-    graph.add_edge('b', 'c')
-    graph.add_edge('b', 'd')
-    graph.add_edge('c', 'e')
-    graph.add_edge('e', 'f')
+    graph.add_edge(0, 2)
+    graph.add_edge(2, 1)
+    graph.add_edge(1, 0)
+    graph.add_edge(0, 3)
+    graph.add_edge(3, 4)
 
-    graph.print_graph()
-    graph.BFS('a')
-    graph.standard_BFS('a')
-    print()
-    graph.print_path('a', 'f')
-    graph.DFS()
+    #print("topological sort")
+    #stack = graph.topological_sort()
+    #while len(stack) != 0:
+    #    print(stack.pop())
 
-    print("topological sort")
-    l = graph.topological_sort()
-    while l.head is not None:
-        print(l.head.data)
-        l.head = l.head.next
+    print("strongly connected components")
+    graph.print_strongly_connected_components()
