@@ -74,12 +74,15 @@ class Graph:
         e = []
         for vertex, adj_list in self.adj.items():
             for edge in adj_list:
+                # only insert each edge once
                 if edge.other(vertex) > vertex:
                     e.append(edge)
 
         return e
 
 class KruskalMST:
+    # Space: O(E)
+    # Time: O(ElogE)
     def __init__(self, graph):
         # Represents our queue of selected edges
         self.mst = deque() 
