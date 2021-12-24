@@ -188,6 +188,7 @@ class Graph:
     def topological_sort(self):
         stack = []
         self.topological_dfs(stack)
+        stack.reverse()
         return stack
 
     def topological_dfs(self, stack):

@@ -1,3 +1,5 @@
+# Elements need to be sorted ahead of time in order to apply this
+
 class MinQueue:
     def __init__(self):
         self.queue = deque()
