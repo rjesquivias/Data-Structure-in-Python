@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 class TrieNode:
     def __init__(self, terminal=False):
         self.terminal = terminal
@@ -67,19 +69,43 @@ class Trie:
         for key, value in root.children.items():
             self._buildStringList(value, stringList, currentString + key)
 
+_trie = lambda: defaultdict(_trie)
+
+def insert(trie, word):
+    node = trie
+    for c in word:
+        node = node[c]
+    node.setdefault("end")
+
+def searchForWord(trie, word):
+    node = trie
+    for c in word:
+        if c not in node:
+            return False
+        node = node[c]
+    return "end" in node
+
+def prefixSearch(trie, prefix):
+    node = trie
+    for c in prefix:
+        if c not in node:
+            return False
+        node = node[c]
+    return True
 
 if __name__ == "__main__":
-    trie = Trie()
-    trie.insert("Hello")
-    trie.insert("World")
-    trie.insert("Another")
-    trie.insert("Way")
-    trie.insert("to")
-    trie.insert("phone")
-    trie.insert("pillow")
-    trie.insert("pills")
-    trie.insert("piller")
+    trie = _trie()
+    insert(trie, "Hello")
+    insert(trie, "World")
+    insert(trie, "Another")
+    insert(trie, "Way")
+    insert(trie, "to")
+    insert(trie, "phone")
+    insert(trie, "pillow")
+    insert(trie, "pills")
+    insert(trie, "piller")
 
+    """
     print(trie)
     print(trie.search("pillow"))
     trie.delete("pillow")
@@ -91,3 +117,4 @@ if __name__ == "__main__":
     trie.delete("piller")
     print(trie.search("pills"))
     print(trie.search("piller"))
+    """
